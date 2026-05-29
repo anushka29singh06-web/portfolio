@@ -1,0 +1,13 @@
+{
+  "name": "anushka-portfolio",
+  "version": "1.0.0",
+  "description": "Sci-Fi Portfolio Website of Anushka Singh",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

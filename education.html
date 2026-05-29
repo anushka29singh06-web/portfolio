@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Education | Anushka Singh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#050510; --bg2:#080820;
+      --neon-purple:#b44fff; --neon-cyan:#00f5ff;
+      --neon-pink:#ff2d78; --neon-green:#39ff14;
+      --text:#e8e8ff; --muted:#7070aa;
+      --card-bg:rgba(15,10,40,0.85);
+      --border:rgba(180,79,255,0.25);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; overflow-x:hidden; cursor:none; }
+    #cursor { width:18px; height:18px; border:2px solid var(--neon-cyan); border-radius:50%; position:fixed; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; mix-blend-mode:screen; }
+    #cursor-dot { width:5px; height:5px; background:var(--neon-purple); border-radius:50%; position:fixed; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; }
+    #stars-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+    .orb { position:fixed; border-radius:50%; filter:blur(80px); pointer-events:none; z-index:0; animation:drift 12s ease-in-out infinite alternate; }
+    .orb1 { width:400px; height:400px; background:rgba(180,79,255,0.1); top:-100px; right:-100px; }
+    .orb2 { width:300px; height:300px; background:rgba(0,245,255,0.07); bottom:50px; left:-50px; animation-delay:-5s; }
+    @keyframes drift { from{transform:translate(0,0);} to{transform:translate(25px,25px);} }
+    body::after { content:''; position:fixed; top:0; left:0; width:100%; height:100%; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:200; }
+
+    nav { position:fixed; top:0; width:100%; z-index:100; padding:18px 50px; display:flex; justify-content:space-between; align-items:center; background:rgba(5,5,16,0.8); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:'Orbitron',monospace; font-size:1.2rem; color:var(--neon-cyan); text-shadow:0 0 16px var(--neon-cyan); letter-spacing:3px; }
+    .nav-links { display:flex; gap:35px; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-family:'Share Tech Mono',monospace; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; transition:color 0.3s,text-shadow 0.3s; cursor:none; }
+    .nav-links a:hover, .nav-links a.active { color:var(--neon-cyan); text-shadow:0 0 10px var(--neon-cyan); }
+
+    .page-header { padding: 130px 50px 60px; text-align:center; position:relative; z-index:1; }
+    .page-header .sec-label { font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--neon-pink); letter-spacing:5px; text-shadow:0 0 8px var(--neon-pink); margin-bottom:14px; display:block; }
+    .page-header h1 { font-family:'Orbitron',monospace; font-size:clamp(2rem,5vw,3.5rem); font-weight:900; background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    .timeline-section { position:relative; z-index:1; padding:20px 50px 80px; max-width:900px; margin:0 auto; }
+    .timeline { position:relative; }
+    .timeline::before { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(180deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink)); transform:translateX(-50%); box-shadow:0 0 10px var(--neon-purple); }
+
+    .tl-item { display:flex; gap:40px; margin-bottom:60px; position:relative; animation:fadeUp 0.8s ease both; }
+    .tl-item:nth-child(1){animation-delay:0.1s}
+    .tl-item:nth-child(2){animation-delay:0.3s}
+    .tl-item:nth-child(3){animation-delay:0.5s}
+    .tl-item.right { flex-direction:row-reverse; }
+    .tl-card { flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:28px 30px; position:relative; transition:all 0.3s; backdrop-filter:blur(10px); }
+    .tl-card:hover { border-color:var(--neon-purple); box-shadow:0 0 30px rgba(180,79,255,0.2), inset 0 0 30px rgba(180,79,255,0.04); transform:translateY(-4px); }
+    .tl-dot { position:absolute; left:50%; top:30px; transform:translateX(-50%); width:18px; height:18px; background:var(--neon-purple); border-radius:50%; border:3px solid var(--bg); box-shadow:0 0 15px var(--neon-purple); z-index:2; }
+    .tl-item.right .tl-dot { }
+    .tl-spacer { flex:1; }
+    .card-year { font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--neon-pink); letter-spacing:3px; margin-bottom:8px; }
+    .card-inst { font-family:'Orbitron',monospace; font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:6px; }
+    .card-degree { font-size:0.95rem; color:var(--neon-cyan); font-weight:600; margin-bottom:12px; }
+    .card-desc { font-size:0.9rem; color:#9090bb; line-height:1.7; }
+    .card-badge { display:inline-block; margin-top:14px; padding:6px 16px; background:rgba(0,245,255,0.1); border:1px solid var(--neon-cyan); border-radius:2px; font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--neon-cyan); letter-spacing:2px; }
+    .card-badge.purple { background:rgba(180,79,255,0.12); border-color:var(--neon-purple); color:var(--neon-purple); }
+    .card-badge.pink { background:rgba(255,45,120,0.1); border-color:var(--neon-pink); color:var(--neon-pink); }
+
+    /* Achievement cards */
+    .achieve-section { position:relative; z-index:1; padding:0 50px 80px; max-width:1100px; margin:0 auto; }
+    .sec-label2 { font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--neon-pink); letter-spacing:5px; text-shadow:0 0 8px var(--neon-pink); margin-bottom:10px; display:block; }
+    .sec-title2 { font-family:'Orbitron',monospace; font-size:1.8rem; font-weight:700; margin-bottom:35px; background:linear-gradient(90deg,#fff,var(--neon-purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .achieve-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+    .achieve-card { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:center; transition:all 0.3s; }
+    .achieve-card:hover { border-color:var(--neon-cyan); box-shadow:0 0 25px rgba(0,245,255,0.15); transform:translateY(-5px); }
+    .achieve-icon { font-size:2.2rem; margin-bottom:12px; }
+    .achieve-title { font-family:'Orbitron',monospace; font-size:0.85rem; color:#fff; margin-bottom:8px; }
+    .achieve-desc { font-size:0.85rem; color:var(--muted); line-height:1.6; }
+
+    footer { position:relative; z-index:1; text-align:center; padding:30px; border-top:1px solid var(--border); font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--muted); letter-spacing:2px; }
+    footer a { color:var(--neon-cyan); text-decoration:none; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+
+    .btn { padding:12px 28px; font-family:'Orbitron',monospace; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; text-decoration:none; border-radius:2px; transition:all 0.3s; cursor:none; display:inline-block; margin-top:18px; }
+    .btn-outline { border:1px solid var(--neon-cyan); color:var(--neon-cyan); background:transparent; }
+    .btn-outline:hover { background:rgba(0,245,255,0.1); box-shadow:0 0 20px rgba(0,245,255,0.3); }
+  </style>
+</head>
+<body>
+  <div id="cursor"></div>
+  <div id="cursor-dot"></div>
+  <canvas id="stars-canvas"></canvas>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <nav>
+    <div class="nav-logo">A.SINGH</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="education.html" class="active">Education</a>
+      <a href="skills.html">Skills</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <span class="sec-label">// MY ACADEMIC JOURNEY</span>
+    <h1>EDUCATION</h1>
+  </div>
+
+  <div class="timeline-section">
+    <div class="timeline">
+
+      <!-- BCA -->
+      <div class="tl-item">
+        <div class="tl-card">
+          <div class="card-year">2023 — PRESENT</div>
+          <div class="card-inst">LNCT College, Bhopal</div>
+          <div class="card-degree">Bachelor of Computer Applications (BCA)</div>
+          <div class="card-desc">Currently pursuing BCA with a strong focus on programming, web technologies, and software development. Actively exploring full-stack development, AI tools, and modern tech frameworks. Making significant strides in the CS world despite coming from a Commerce background.</div>
+          <span class="card-badge purple">CGPA: 8.0</span>
+          <span class="card-badge" style="margin-left:8px;">In Progress</span>
+        </div>
+        <div class="tl-dot"></div>
+        <div class="tl-spacer"></div>
+      </div>
+
+      <!-- 12th -->
+      <div class="tl-item right">
+        <div class="tl-spacer"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="card-year">2021 — 2023</div>
+          <div class="card-inst">Kendriya Vidyalaya</div>
+          <div class="card-degree">Senior Secondary (Class XII) — Commerce</div>
+          <div class="card-desc">Completed Class 12th with Commerce stream from the prestigious Kendriya Vidyalaya network. Developed strong analytical and quantitative skills through subjects like Accountancy, Economics, and Business Studies — which now complement her technical thinking.</div>
+          <span class="card-badge pink">70% — Class XII</span>
+        </div>
+      </div>
+
+      <!-- 10th -->
+      <div class="tl-item">
+        <div class="tl-card">
+          <div class="card-year">BEFORE 2021</div>
+          <div class="card-inst">Kendriya Vidyalaya</div>
+          <div class="card-degree">Secondary Education (Class X)</div>
+          <div class="card-desc">Built a strong academic foundation at Kendriya Vidyalaya — one of India's premier school networks. Developed discipline, structured thinking, and a love for learning that continues to fuel her journey in technology.</div>
+          <span class="card-badge">KV Scholar</span>
+        </div>
+        <div class="tl-dot"></div>
+        <div class="tl-spacer"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="achieve-section">
+    <span class="sec-label2">// HIGHLIGHTS</span>
+    <h2 class="sec-title2">KEY ACHIEVEMENTS</h2>
+    <div class="achieve-grid">
+      <div class="achieve-card">
+        <div class="achieve-icon">🎯</div>
+        <div class="achieve-title">8.0 CGPA</div>
+        <div class="achieve-desc">Consistently high academic performance in BCA, demonstrating strong grasp of computer science fundamentals.</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-icon">🔄</div>
+        <div class="achieve-title">Commerce → CS Switch</div>
+        <div class="achieve-desc">Successfully transitioned from Commerce to Computer Science, showcasing adaptability and determination.</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-icon">🤖</div>
+        <div class="achieve-title">AI Tools Proficiency</div>
+        <div class="achieve-desc">Actively integrating modern AI tools into development workflow — staying ahead of the tech curve.</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-icon">🌐</div>
+        <div class="achieve-title">Full Stack Learner</div>
+        <div class="achieve-desc">Simultaneously learning frontend, backend, and multiple programming languages during academic studies.</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-icon">🏫</div>
+        <div class="achieve-title">KV Alumni</div>
+        <div class="achieve-desc">Graduate of Kendriya Vidyalaya — known for academic rigour, discipline, and all-round development.</div>
+      </div>
+      <div class="achieve-card">
+        <div class="achieve-icon">🚀</div>
+        <div class="achieve-title">Self-Driven Growth</div>
+        <div class="achieve-desc">Self-taught multiple technologies beyond curriculum, including Python, Java, and full web development stack.</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="skills.html" class="btn btn-outline">View My Skills →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Designed &amp; Built by <a href="index.html">Anushka Singh</a> &nbsp;|&nbsp; anushka29singh@gmail.com &nbsp;|&nbsp; &copy; 2025</p>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const dot = document.getElementById('cursor-dot');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+      dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+    });
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function initStars() { stars = []; for(let i=0;i<130;i++) stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.4+0.2,speed:Math.random()*0.25+0.04,alpha:Math.random()*0.6+0.2,color:['#00f5ff','#b44fff','#ff2d78','#ffffff'][Math.floor(Math.random()*4)]}); }
+    function animStars() { ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.color;ctx.globalAlpha=s.alpha;ctx.fill();s.y+=s.speed;if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;}}); ctx.globalAlpha=1; requestAnimationFrame(animStars); }
+    resize(); initStars(); animStars();
+    window.addEventListener('resize',()=>{resize();initStars();});
+  </script>
+</body>
+</html>

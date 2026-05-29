@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skills | Anushka Singh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#050510; --neon-purple:#b44fff; --neon-cyan:#00f5ff;
+      --neon-pink:#ff2d78; --neon-green:#39ff14;
+      --text:#e8e8ff; --muted:#7070aa;
+      --card-bg:rgba(15,10,40,0.85); --border:rgba(180,79,255,0.25);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; overflow-x:hidden; cursor:none; }
+    #cursor { width:18px; height:18px; border:2px solid var(--neon-cyan); border-radius:50%; position:fixed; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; mix-blend-mode:screen; }
+    #cursor-dot { width:5px; height:5px; background:var(--neon-purple); border-radius:50%; position:fixed; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; }
+    #stars-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+    .orb { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; animation:drift 14s ease-in-out infinite alternate; }
+    .orb1 { width:500px; height:500px; background:rgba(0,245,255,0.06); top:30%; left:-150px; }
+    .orb2 { width:400px; height:400px; background:rgba(255,45,120,0.07); bottom:-50px; right:-100px; animation-delay:-7s; }
+    @keyframes drift { from{transform:translate(0,0);} to{transform:translate(30px,20px);} }
+    body::after { content:''; position:fixed; top:0; left:0; width:100%; height:100%; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:200; }
+
+    nav { position:fixed; top:0; width:100%; z-index:100; padding:18px 50px; display:flex; justify-content:space-between; align-items:center; background:rgba(5,5,16,0.8); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:'Orbitron',monospace; font-size:1.2rem; color:var(--neon-cyan); text-shadow:0 0 16px var(--neon-cyan); letter-spacing:3px; }
+    .nav-links { display:flex; gap:35px; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-family:'Share Tech Mono',monospace; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; transition:color 0.3s,text-shadow 0.3s; cursor:none; }
+    .nav-links a:hover, .nav-links a.active { color:var(--neon-cyan); text-shadow:0 0 10px var(--neon-cyan); }
+
+    .page-header { padding:130px 50px 60px; text-align:center; position:relative; z-index:1; }
+    .sec-label { font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--neon-pink); letter-spacing:5px; text-shadow:0 0 8px var(--neon-pink); margin-bottom:14px; display:block; }
+    .page-header h1 { font-family:'Orbitron',monospace; font-size:clamp(2rem,5vw,3.5rem); font-weight:900; background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    .skills-section { position:relative; z-index:1; padding:20px 50px 80px; max-width:1100px; margin:0 auto; }
+    .sec-title { font-family:'Orbitron',monospace; font-size:1.6rem; font-weight:700; margin-bottom:35px; background:linear-gradient(90deg,#fff,var(--neon-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    /* Skill bars */
+    .skill-bar-group { margin-bottom:50px; }
+    .skill-bar-item { margin-bottom:22px; }
+    .skill-bar-header { display:flex; justify-content:space-between; margin-bottom:8px; align-items:center; }
+    .skill-name { font-family:'Share Tech Mono',monospace; font-size:0.82rem; color:var(--text); letter-spacing:1px; display:flex; align-items:center; gap:10px; }
+    .skill-pct { font-family:'Orbitron',monospace; font-size:0.75rem; color:var(--neon-cyan); }
+    .bar-track { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:3px; width:0%; transition:width 1.4s cubic-bezier(0.16,1,0.3,1); position:relative; }
+    .bar-fill::after { content:''; position:absolute; right:0; top:-2px; width:10px; height:10px; border-radius:50%; }
+    .bar-cyan { background:linear-gradient(90deg,rgba(0,245,255,0.3),var(--neon-cyan)); }
+    .bar-cyan::after { background:var(--neon-cyan); box-shadow:0 0 10px var(--neon-cyan); }
+    .bar-purple { background:linear-gradient(90deg,rgba(180,79,255,0.3),var(--neon-purple)); }
+    .bar-purple::after { background:var(--neon-purple); box-shadow:0 0 10px var(--neon-purple); }
+    .bar-pink { background:linear-gradient(90deg,rgba(255,45,120,0.3),var(--neon-pink)); }
+    .bar-pink::after { background:var(--neon-pink); box-shadow:0 0 10px var(--neon-pink); }
+    .bar-green { background:linear-gradient(90deg,rgba(57,255,20,0.3),var(--neon-green)); }
+    .bar-green::after { background:var(--neon-green); box-shadow:0 0 10px var(--neon-green); }
+
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:60px; }
+
+    /* Hexagon tech cards */
+    .tech-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:60px; }
+    .tech-card { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:22px 16px; text-align:center; transition:all 0.35s; position:relative; overflow:hidden; }
+    .tech-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent 40%,rgba(180,79,255,0.06)); transition:opacity 0.3s; }
+    .tech-card:hover { border-color:var(--neon-purple); box-shadow:0 0 30px rgba(180,79,255,0.25); transform:translateY(-6px) scale(1.02); }
+    .tech-icon { font-size:2rem; margin-bottom:10px; display:block; }
+    .tech-name { font-family:'Orbitron',monospace; font-size:0.72rem; color:#fff; letter-spacing:1px; margin-bottom:6px; }
+    .tech-level { font-size:0.72rem; color:var(--muted); font-family:'Share Tech Mono',monospace; }
+    .level-dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:3px; }
+    .filled { background:var(--neon-cyan); box-shadow:0 0 5px var(--neon-cyan); }
+    .empty { background:rgba(255,255,255,0.1); }
+
+    /* Soft skills */
+    .soft-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:60px; }
+    .soft-card { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:20px; transition:all 0.3s; }
+    .soft-card:hover { border-color:var(--neon-pink); transform:translateY(-4px); }
+    .soft-icon { font-size:1.6rem; margin-bottom:10px; }
+    .soft-name { font-family:'Orbitron',monospace; font-size:0.75rem; color:#fff; margin-bottom:6px; }
+    .soft-desc { font-size:0.82rem; color:var(--muted); line-height:1.6; }
+
+    .btn { padding:12px 28px; font-family:'Orbitron',monospace; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; text-decoration:none; border-radius:2px; transition:all 0.3s; cursor:none; display:inline-block; margin-top:18px; }
+    .btn-outline { border:1px solid var(--neon-cyan); color:var(--neon-cyan); background:transparent; }
+    .btn-outline:hover { background:rgba(0,245,255,0.1); box-shadow:0 0 20px rgba(0,245,255,0.3); }
+    footer { position:relative; z-index:1; text-align:center; padding:30px; border-top:1px solid var(--border); font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--muted); letter-spacing:2px; }
+    footer a { color:var(--neon-cyan); text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div id="cursor"></div>
+  <div id="cursor-dot"></div>
+  <canvas id="stars-canvas"></canvas>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <nav>
+    <div class="nav-logo">A.SINGH</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="education.html">Education</a>
+      <a href="skills.html" class="active">Skills</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <span class="sec-label">// TECHNICAL ARSENAL</span>
+    <h1>SKILLS</h1>
+  </div>
+
+  <div class="skills-section">
+    <!-- Skill Bars -->
+    <span class="sec-label" style="display:block; margin-bottom:10px;">// PROFICIENCY LEVELS</span>
+    <h2 class="sec-title">CORE COMPETENCIES</h2>
+    <div class="two-col skill-bar-group">
+      <div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-header"><span class="skill-name">🌐 Frontend Development</span><span class="skill-pct">85%</span></div>
+          <div class="bar-track"><div class="bar-fill bar-cyan" data-width="85"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-header"><span class="skill-name">⚙️ Backend Development</span><span class="skill-pct">75%</span></div>
+          <div class="bar-track"><div class="bar-fill bar-purple" data-width="75"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-header"><span class="skill-name">🐍 Python</span><span class="skill-pct">80%</span></div>
+          <div class="bar-track"><div class="bar-fill bar-green" data-width="80"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-header"><span class="skill-name">☕ Java</span><span class="skill-pct">72%</span></div>
+          <div class="bar-track"><div class="bar-fill bar-pink" data-width="72"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-header"><span class="skill-name">🤖 AI Tools</span><span class="skill-pct">88%</span></div>
+          <div class="bar-track"><div class="bar-fill bar-cyan" data-width="88"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-header"><span class="skill-name">🗄️ Database (SQL)</span><span class="skill-pct">70%</span></div>
+          <div class="bar-track"><div class="bar-fill bar-purple" data-width="70"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech Stack Cards -->
+    <span class="sec-label" style="display:block; margin-bottom:10px; margin-top:30px;">// TECH STACK</span>
+    <h2 class="sec-title">TECHNOLOGIES</h2>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <span class="tech-icon">🌐</span>
+        <div class="tech-name">HTML / CSS</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">⚡</span>
+        <div class="tech-name">JavaScript</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot empty"></span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">🐍</span>
+        <div class="tech-name">Python</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot empty"></span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">☕</span>
+        <div class="tech-name">Java</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot empty"></span><span class="level-dot empty"></span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">🤖</span>
+        <div class="tech-name">AI Tools</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">🗄️</span>
+        <div class="tech-name">SQL / MySQL</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot empty"></span><span class="level-dot empty"></span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">📱</span>
+        <div class="tech-name">Responsive Design</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot empty"></span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">🔧</span>
+        <div class="tech-name">Git / GitHub</div>
+        <div class="tech-level">
+          <span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot filled"></span><span class="level-dot empty"></span><span class="level-dot empty"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Soft Skills -->
+    <span class="sec-label" style="display:block; margin-bottom:10px;">// BEYOND CODE</span>
+    <h2 class="sec-title">SOFT SKILLS</h2>
+    <div class="soft-grid">
+      <div class="soft-card">
+        <div class="soft-icon">🧠</div>
+        <div class="soft-name">Quick Learner</div>
+        <div class="soft-desc">Rapidly acquires new skills and technologies — proved by switching from Commerce to CS with excellent results.</div>
+      </div>
+      <div class="soft-card">
+        <div class="soft-icon">💡</div>
+        <div class="soft-name">Problem Solving</div>
+        <div class="soft-desc">Analytical thinking sharpened through both Commerce studies and programming challenges.</div>
+      </div>
+      <div class="soft-card">
+        <div class="soft-icon">🤝</div>
+        <div class="soft-name">Team Collaboration</div>
+        <div class="soft-desc">Works effectively in team environments, contributing ideas and supporting group goals.</div>
+      </div>
+      <div class="soft-card">
+        <div class="soft-icon">🎯</div>
+        <div class="soft-name">Goal-Oriented</div>
+        <div class="soft-desc">Maintains clear focus on academic and professional goals, consistently delivering results.</div>
+      </div>
+      <div class="soft-card">
+        <div class="soft-icon">🔄</div>
+        <div class="soft-name">Adaptability</div>
+        <div class="soft-desc">Comfortable navigating change and uncertainty — a core strength in the fast-moving tech world.</div>
+      </div>
+      <div class="soft-card">
+        <div class="soft-icon">✨</div>
+        <div class="soft-name">Creativity</div>
+        <div class="soft-desc">Brings a creative eye to development, blending aesthetics with functionality in web projects.</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;">
+      <a href="contact.html" class="btn btn-outline">Contact Me →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Designed &amp; Built by <a href="index.html">Anushka Singh</a> &nbsp;|&nbsp; anushka29singh@gmail.com &nbsp;|&nbsp; &copy; 2025</p>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const dot = document.getElementById('cursor-dot');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+      dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+    });
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function initStars() { stars=[]; for(let i=0;i<130;i++) stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.4+0.2,speed:Math.random()*0.25+0.04,alpha:Math.random()*0.6+0.2,color:['#00f5ff','#b44fff','#ff2d78','#ffffff'][Math.floor(Math.random()*4)]}); }
+    function animStars() { ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.color;ctx.globalAlpha=s.alpha;ctx.fill();s.y+=s.speed;if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;}}); ctx.globalAlpha=1; requestAnimationFrame(animStars); }
+    resize(); initStars(); animStars();
+    window.addEventListener('resize',()=>{resize();initStars();});
+
+    // Animate bars on scroll
+    const bars = document.querySelectorAll('.bar-fill');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) { e.target.style.width = e.target.dataset.width + '%'; obs.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    bars.forEach(b => obs.observe(b));
+  </script>
+</body>
+</html>

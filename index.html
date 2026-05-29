@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anushka Singh | Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050510;
+      --bg2: #080820;
+      --neon-purple: #b44fff;
+      --neon-cyan: #00f5ff;
+      --neon-pink: #ff2d78;
+      --neon-green: #39ff14;
+      --text: #e8e8ff;
+      --muted: #7070aa;
+      --card-bg: rgba(15,10,40,0.85);
+      --border: rgba(180,79,255,0.25);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    /* Custom cursor */
+    #cursor {
+      width: 18px; height: 18px;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 50%;
+      position: fixed; pointer-events: none;
+      transform: translate(-50%,-50%);
+      z-index: 9999;
+      transition: transform 0.1s, border-color 0.3s;
+      mix-blend-mode: screen;
+    }
+    #cursor-dot {
+      width: 5px; height: 5px;
+      background: var(--neon-purple);
+      border-radius: 50%;
+      position: fixed; pointer-events: none;
+      transform: translate(-50%,-50%);
+      z-index: 9999;
+    }
+
+    /* Starfield */
+    #stars-canvas {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top:0; width:100%; z-index: 100;
+      padding: 18px 50px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(5,5,16,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 16px var(--neon-cyan);
+      letter-spacing: 3px;
+    }
+    .nav-links { display: flex; gap: 35px; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1;
+      padding: 80px 50px 40px;
+    }
+    .hero-inner {
+      max-width: 900px;
+      text-align: center;
+    }
+    .glitch-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 6px;
+      color: var(--neon-pink);
+      text-shadow: 0 0 10px var(--neon-pink);
+      margin-bottom: 24px;
+      display: block;
+      animation: fadeUp 1s ease both;
+    }
+    .hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 50%, var(--neon-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 1s 0.2s ease both;
+      position: relative;
+    }
+    .hero-subtitle {
+      margin-top: 20px;
+      font-size: 1.3rem;
+      color: var(--muted);
+      font-weight: 300;
+      letter-spacing: 2px;
+      animation: fadeUp 1s 0.4s ease both;
+    }
+    .hero-subtitle span { color: var(--neon-cyan); font-weight: 600; }
+    .typewriter {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      color: var(--neon-green);
+      margin-top: 14px;
+      min-height: 1.5rem;
+      animation: fadeUp 1s 0.6s ease both;
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .hero-cta {
+      margin-top: 44px;
+      display: flex; gap: 20px; justify-content: center;
+      animation: fadeUp 1s 0.8s ease both;
+    }
+    .btn {
+      padding: 14px 36px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.3s;
+      cursor: none;
+      display: inline-block;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+      color: #fff;
+      border: none;
+      box-shadow: 0 0 25px rgba(180,79,255,0.5);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 45px rgba(180,79,255,0.9), 0 0 80px rgba(255,45,120,0.4);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      background: transparent;
+    }
+    .btn-outline:hover {
+      background: rgba(0,245,255,0.1);
+      box-shadow: 0 0 25px rgba(0,245,255,0.4);
+      transform: translateY(-2px);
+    }
+
+    /* STATS STRIP */
+    .stats-strip {
+      position: relative; z-index: 1;
+      padding: 40px 50px;
+      display: flex; justify-content: center; gap: 60px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,5,30,0.6);
+      animation: fadeUp 1s 1s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 20px var(--neon-cyan);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ABOUT SECTION */
+    .section {
+      position: relative; z-index: 1;
+      padding: 90px 50px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .sec-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--neon-pink);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px var(--neon-pink);
+      margin-bottom: 10px;
+    }
+    .sec-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 50px;
+      background: linear-gradient(90deg, #fff 0%, var(--neon-purple) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #b0b0d0;
+      margin-bottom: 18px;
+    }
+    .about-text p span { color: var(--neon-cyan); font-weight: 600; }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .skill-chip {
+      padding: 12px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .skill-chip:hover {
+      border-color: var(--neon-purple);
+      background: rgba(180,79,255,0.12);
+      box-shadow: 0 0 15px rgba(180,79,255,0.3);
+      transform: translateY(-3px);
+      color: var(--neon-purple);
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid var(--border);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+    }
+    footer a { color: var(--neon-cyan); text-decoration: none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scanline overlay */
+    body::after {
+      content: '';
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+      pointer-events: none; z-index: 200;
+    }
+
+    /* Glow orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .orb1 { width:400px; height:400px; background:rgba(180,79,255,0.12); top:-100px; left:-100px; }
+    .orb2 { width:350px; height:350px; background:rgba(0,245,255,0.08); bottom:100px; right:-80px; animation-delay:-6s; }
+    .orb3 { width:250px; height:250px; background:rgba(255,45,120,0.07); top:50%; left:50%; transform:translate(-50%,-50%); animation-delay:-3s; }
+
+    @keyframes drift {
+      from { transform: translate(0,0); }
+      to { transform: translate(30px, 30px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="cursor"></div>
+  <div id="cursor-dot"></div>
+  <canvas id="stars-canvas"></canvas>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <nav>
+    <div class="nav-logo">A.SINGH</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="education.html">Education</a>
+      <a href="skills.html">Skills</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="glitch-tag">// WELCOME TO MY UNIVERSE</span>
+      <h1>ANUSHKA<br>SINGH</h1>
+      <p class="hero-subtitle">BCA Student &amp; <span>Tech Enthusiast</span></p>
+      <div class="typewriter" id="typewriter"></div>
+      <div class="hero-cta">
+        <a href="education.html" class="btn btn-primary">Explore My Journey</a>
+        <a href="contact.html" class="btn btn-outline">Get In Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-strip">
+    <div class="stat"><div class="stat-num" data-target="8">0</div><div class="stat-label">CGPA</div></div>
+    <div class="stat"><div class="stat-num" data-target="70">0</div><div class="stat-label">12th %</div></div>
+    <div class="stat"><div class="stat-num" data-target="6">0</div><div class="stat-label">Tech Skills</div></div>
+    <div class="stat"><div class="stat-num" data-target="3">0</div><div class="stat-label">Years in CS</div></div>
+  </div>
+
+  <div class="section">
+    <p class="sec-label">// ABOUT ME</p>
+    <h2 class="sec-title">WHO AM I?</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>Hey! I'm <span>Anushka Singh</span>, a passionate BCA student at <span>LNCT College, Bhopal</span> — building at the intersection of code, creativity, and curiosity.</p>
+        <p>Coming from a <span>Commerce background</span>, I made a bold pivot into <span>Computer Science</span> — and it's been one of the best decisions of my life. I love crafting digital experiences that are both functional and beautiful.</p>
+        <p>From <span>Web Development</span> to <span>AI Tools</span>, I thrive on learning fast and building faster. Currently maintaining an impressive <span>8.0 CGPA</span> while exploring the tech universe.</p>
+        <a href="education.html" class="btn btn-primary" style="margin-top:10px; display:inline-block;">View Education →</a>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-chip">🌐 Frontend Dev</div>
+        <div class="skill-chip">⚙️ Backend Dev</div>
+        <div class="skill-chip">☕ Java</div>
+        <div class="skill-chip">🐍 Python</div>
+        <div class="skill-chip">🤖 AI Tools</div>
+        <div class="skill-chip">💡 Problem Solving</div>
+        <div class="skill-chip">📱 Responsive UI</div>
+        <div class="skill-chip">🗄️ Databases</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Designed &amp; Built by <a href="index.html">Anushka Singh</a> &nbsp;|&nbsp; anushka29singh@gmail.com &nbsp;|&nbsp; &copy; 2025</p>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const dot = document.getElementById('cursor-dot');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+    });
+
+    // Starfield
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function initStars() {
+      stars = [];
+      for(let i=0; i<160; i++) {
+        stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+          r: Math.random()*1.5+0.2, speed: Math.random()*0.3+0.05,
+          alpha: Math.random()*0.7+0.2, color: ['#00f5ff','#b44fff','#ff2d78','#ffffff'][Math.floor(Math.random()*4)] });
+      }
+    }
+    function animStars() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      stars.forEach(s => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = s.alpha;
+        ctx.fill();
+        s.y += s.speed;
+        if(s.y > canvas.height) { s.y = 0; s.x = Math.random()*canvas.width; }
+      });
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(animStars);
+    }
+    resize(); initStars(); animStars();
+    window.addEventListener('resize', () => { resize(); initStars(); });
+
+    // Typewriter
+    const phrases = ['Full Stack Developer 🚀','BCA Student @ LNCT 🎓','Python & Java Coder 🐍','AI Enthusiast 🤖','Commerce → CS Journey ⚡'];
+    let pi = 0, ci = 0, del = false;
+    const tw = document.getElementById('typewriter');
+    function type() {
+      const phrase = phrases[pi];
+      if(!del) { tw.textContent = '> ' + phrase.slice(0, ++ci); if(ci === phrase.length) { del=true; setTimeout(type,1800); return; } }
+      else { tw.textContent = '> ' + phrase.slice(0, --ci); if(ci === 0) { del=false; pi=(pi+1)%phrases.length; } }
+      setTimeout(type, del ? 50 : 85);
+    }
+    type();
+
+    // Count-up animation
+    const counters = document.querySelectorAll('.stat-num');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if(e.isIntersecting) {
+          const target = +e.target.dataset.target;
+          let count = 0;
+          const step = target / 60;
+          const t = setInterval(() => {
+            count = Math.min(count + step, target);
+            e.target.textContent = target === 8 ? count.toFixed(1) : Math.floor(count);
+            if(count >= target) { e.target.textContent = target === 8 ? '8.0' : target; clearInterval(t); }
+          }, 25);
+          observer.unobserve(e.target);
+        }
+      });
+    });
+    counters.forEach(c => observer.observe(c));
+  </script>
+</body>
+</html>
